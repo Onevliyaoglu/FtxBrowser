@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, td, th {
+  border: 1px solid black;
+  background-color: rgba(211, 211, 211, 0.397);
+}
+</style>
+<title>Real Time Table</title>
+</head>
+<body>
+
+    <div id='showData'></div>
+
+<script>
+  var data;
+  setInterval(() => {  getData(); }, 200);
+  setInterval(() => {  drawTable(); }, 400);
+     async function getData() {
+
+          const response = await fetch('https://ftx.com/api/markets', {method:"get" , mode:"cors", cache:"no-cache"} );
+          data = await response.json();
+          //console.table(data.result);
+    }
+  function drawTable(){
+  var col = [];
+        for (var i = 0; i < data.result.length; i++) {
+            for (var key in data.result[i]) {
+                if (col.indexOf(key) === -1) {
+                    col.push(key);
+                }
+            }
+          }
+    var table = document.createElement("table");
+    var tr = table.insertRow(-1); 
+    for (var i = 0; i < col.length; i++) {
+            var th = document.createElement("th");  
+            th.innerHTML = col[i];
+            tr.appendChild(th);
+        }
+
+for (var i = 0; i < data.result.length; i++) {
+
+tr = table.insertRow(-1);
+
+for (var j = 0; j < col.length; j++) {
+    var tabCell = tr.insertCell(-1);
+    tabCell.innerHTML = data.result[i][col[j]];
+  }
+}
+var divShowData = document.getElementById('showData');
+        divShowData.innerHTML = "";
+        divShowData.appendChild(table);
+      
+}
+</script>
+
+</body>
+</html>
