@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <style>
 table, td, th {
   border: 1px solid black;
@@ -14,22 +15,20 @@ table, td, th {
     <div id='showData'></div>
 
 <script>
-  var data;
+  var dataq;
   setInterval(() => {  getData(); }, 200);
   setInterval(() => {  drawTable(); }, 400);
-     function getData() {
-          var req = new XMLHttpRequest();
-          req.responseType = "json";
-          req.onload = function() {
-            data = req.response;
-          }
-          req.open("GET", "https://ftx.com/api/markets");
-          req.send(null);
+    async function getData() {
+       dataq = await $.ajax({
+                                type: 'GET',
+                                dataType: 'jsonp', //json olarak değiştirince direkt cors hatası veriyor
+                                url: "https://ftx.com/api/markets",
+                            });
     }
   function drawTable(){
   var col = [];
-        for (var i = 0; i < data.result.length; i++) {
-            for (var key in data.result[i]) {
+        for (var i = 0; i < dataq.result.length; i++) {
+            for (var key in dataq.result[i]) {
                 if (col.indexOf(key) === -1) {
                     col.push(key);
                 }
@@ -43,13 +42,13 @@ table, td, th {
             tr.appendChild(th);
         }
 
-for (var i = 0; i < data.result.length; i++) {
+for (var i = 0; i < dataq.result.length; i++) {
 
 tr = table.insertRow(-1);
 
 for (var j = 0; j < col.length; j++) {
     var tabCell = tr.insertCell(-1);
-    tabCell.innerHTML = data.result[i][col[j]];
+    tabCell.innerHTML = dataq.result[i][col[j]];
   }
 }
 var divShowData = document.getElementById('showData');
